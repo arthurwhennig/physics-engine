@@ -6,7 +6,6 @@
 //
 
 #include <iostream>
-#include <algorithm>
 #include <cmath>
 
 #include "Vector2D.hpp"
@@ -22,20 +21,21 @@ RigidBody::RigidBody()
 {
 }
 
-RigidBody::RigidBody(const Vector2D &pos, float mass, float radius)
+RigidBody::RigidBody(const Vector2D &pos, const float mass, const float radius)
     : position(pos), rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
-      angularVelocity(0.0f), angularAcceleration(0.0f), restitution(0.5f), friction(0.3f),
-      drag(0.01f), forceAccumulator(0.0f, 0.0f), torqueAccumulator(0.0f),
-      bodyType(BodyType::DYNAMIC), awake(true), radius(radius)
+      angularVelocity(0.0f), angularAcceleration(0.0f), mass(mass), inverseMass(1.0f),
+      momentOfInertia(1.0f), inverseInertia(1.0f), restitution(0.5f),
+      friction(0.3f), drag(0.01f), forceAccumulator(0.0f, 0.0f), torqueAccumulator(0.0f), bodyType(BodyType::DYNAMIC),
+      awake(true), radius(radius)
 {
     setMass(mass);
 }
 
 // destructor
-RigidBody::~RigidBody() {}
+RigidBody::~RigidBody() = default;
 
 // mass and inertia
-void RigidBody::setMass(float m)
+void RigidBody::setMass(float const m)
 {
     if (m <= 0.0f)
     {
@@ -47,7 +47,7 @@ void RigidBody::setMass(float m)
     else
     {
         mass = m;
-        inverseMass = 1.0f / m;
+        inverseMass = 1.0f / mass;
         if (bodyType == BodyType::STATIC)
         {
             bodyType = BodyType::DYNAMIC;
@@ -67,7 +67,7 @@ void RigidBody::setMass(float m)
     }
 }
 
-void RigidBody::setMomentOfInertia(float inertia)
+void RigidBody::setMomentOfInertia(const float inertia)
 {
     if (inertia <= 0.0f)
     {
@@ -82,7 +82,7 @@ void RigidBody::setMomentOfInertia(float inertia)
 }
 
 // body type
-void RigidBody::setBodyType(BodyType type)
+void RigidBody::setBodyType(const BodyType type)
 {
     bodyType = type;
     if (type == BodyType::STATIC)
@@ -122,14 +122,14 @@ void RigidBody::addForceAtPoint(const Vector2D &force, const Vector2D &point)
     forceAccumulator += force;
 
     // calculate torque: τ = r × F
-    Vector2D r = point - position;
-    float torque = r.cross(force);
+    const Vector2D r = point - position;
+    const float torque = r.cross(force);
     torqueAccumulator += torque;
 
     awake = true;
 }
 
-void RigidBody::addTorque(float torque)
+void RigidBody::addTorque(const float torque)
 {
     if (bodyType == BodyType::STATIC)
         return;
@@ -155,15 +155,15 @@ void RigidBody::addImpulseAtPoint(const Vector2D &impulse, const Vector2D &point
     velocity += impulse * inverseMass;
 
     // calculate angular impulse
-    Vector2D r = point - position;
-    float angularImpulse = r.cross(impulse);
+    const Vector2D r = point - position;
+    const float angularImpulse = r.cross(impulse);
     angularVelocity += angularImpulse * inverseInertia;
 
     awake = true;
 }
 
 // integration
-void RigidBody::integrate(float deltaTime)
+void RigidBody::integrate(const float deltaTime)
 {
     if (bodyType == BodyType::STATIC || !awake)
         return;
@@ -173,7 +173,7 @@ void RigidBody::integrate(float deltaTime)
     angularAcceleration = torqueAccumulator * inverseInertia;
 
     // apply drag
-    Vector2D dragForce = velocity * (-drag);
+    const Vector2D dragForce = velocity * (-drag);
     acceleration += dragForce * inverseMass;
 
     // integrate velocity: v = v0 + a*dt
@@ -195,7 +195,7 @@ void RigidBody::integrate(float deltaTime)
         rotation -= 2.0f * M_PI;
 
     // check if body should go to sleep
-    const float sleepEpsilon = 0.1f;
+    constexpr float sleepEpsilon = 0.1f;
     if (velocity.magnitudeSquared() < sleepEpsilon * sleepEpsilon &&
         std::abs(angularVelocity) < sleepEpsilon)
     {
@@ -214,9 +214,9 @@ void RigidBody::clearAccumulators()
 // utility methods
 Vector2D RigidBody::getPointVelocity(const Vector2D &point) const
 {
-    Vector2D r = point - position;
+    const Vector2D r = point - position;
     // v = v_center + ω × r
-    Vector2D rotationalVelocity(-r.y * angularVelocity, r.x * angularVelocity);
+    const Vector2D rotationalVelocity(-r.y * angularVelocity, r.x * angularVelocity);
     return velocity + rotationalVelocity;
 }
 

@@ -4,8 +4,7 @@
 //
 //  Created by Arthur Hennig on 04.09.2025.
 //
-
-#include <memory>
+#pragma once
 
 #include "Vector2D.hpp"
 
@@ -62,7 +61,7 @@ private:
 public:
     // constructors
     RigidBody();
-    RigidBody(const Vector2D &pos, float mass = 1.0f, float radius = 1.0f);
+    explicit RigidBody(const Vector2D &pos, float mass = 1.0f, float radius = 1.0f);
 
     // destructor
     ~RigidBody();
@@ -72,14 +71,14 @@ public:
     void setPosition(const Vector2D &pos) { position = pos; }
 
     float getRotation() const { return rotation; }
-    void setRotation(float rot) { rotation = rot; }
+    void setRotation(const float rot) { rotation = rot; }
 
     // velocity methods
     const Vector2D &getVelocity() const { return velocity; }
     void setVelocity(const Vector2D &vel) { velocity = vel; }
 
     float getAngularVelocity() const { return angularVelocity; }
-    void setAngularVelocity(float angVel) { angularVelocity = angVel; }
+    void setAngularVelocity(const float angVel) { angularVelocity = angVel; }
 
     // acceleration methods
     const Vector2D &getAcceleration() const { return acceleration; }
@@ -95,13 +94,13 @@ public:
 
     // material properties
     float getRestitution() const { return restitution; }
-    void setRestitution(float rest) { restitution = std::max(0.0f, std::min(1.0f, rest)); }
+    void setRestitution(const float rest) { restitution = std::max(0.0f, std::min(1.0f, rest)); }
 
     float getFriction() const { return friction; }
-    void setFriction(float fric) { friction = std::max(0.0f, fric); }
+    void setFriction(const float fric) { friction = std::max(0.0f, fric); }
 
     float getDrag() const { return drag; }
-    void setDrag(float d) { drag = std::max(0.0f, d); }
+    void setDrag(const float d) { drag = std::max(0.0f, d); }
 
     // body type
     BodyType getBodyType() const { return bodyType; }
@@ -112,11 +111,11 @@ public:
 
     // shape properties
     float getRadius() const { return radius; }
-    void setRadius(float r) { radius = std::max(0.1f, r); }
+    void setRadius(const float r) { radius = std::max(0.1f, r); }
 
     // sleep state
     bool isAwake() const { return awake; }
-    void setAwake(bool a) { awake = a; }
+    void setAwake(const bool a) { awake = a; }
 
     // force and impulse application
     void addForce(const Vector2D &force);

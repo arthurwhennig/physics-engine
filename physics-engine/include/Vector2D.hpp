@@ -5,8 +5,7 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
-#include <iostream>
-#include <cmath>
+#pragma once
 
 #ifndef Vector2D_h
 #define Vector2D_h

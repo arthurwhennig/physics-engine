@@ -5,6 +5,7 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
+#pragma once
 #include <vector>
 #include <memory>
 

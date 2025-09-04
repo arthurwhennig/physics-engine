@@ -5,17 +5,17 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
+#include <iostream>
 #include <cmath>
-#include <algorithm>
 
 #include "Vector2D.hpp"
 
 // constructors
 Vector2D::Vector2D() : x(0.0f), y(0.0f) {}
 
-Vector2D::Vector2D(float x, float y) : x(x), y(y) {}
+Vector2D::Vector2D(const float x, const float y) : x(x), y(y) {}
 
-Vector2D::Vector2D(const Vector2D &other) : x(other.x), y(other.y) {}
+Vector2D::Vector2D(const Vector2D &other) = default;
 
 // assignment operator
 Vector2D &Vector2D::operator=(const Vector2D &other)
@@ -31,26 +31,26 @@ Vector2D &Vector2D::operator=(const Vector2D &other)
 // arithmetic operators
 Vector2D Vector2D::operator+(const Vector2D &other) const
 {
-    return Vector2D(x + other.x, y + other.y);
+    return {x + other.x, y + other.y};
 }
 
 Vector2D Vector2D::operator-(const Vector2D &other) const
 {
-    return Vector2D(x - other.x, y - other.y);
+    return {x - other.x, y - other.y};
 }
 
-Vector2D Vector2D::operator*(float scalar) const
+Vector2D Vector2D::operator*(float const scalar) const
 {
-    return Vector2D(x * scalar, y * scalar);
+    return {x * scalar, y * scalar};
 }
 
-Vector2D Vector2D::operator/(float scalar) const
+Vector2D Vector2D::operator/(float const scalar) const
 {
     if (std::abs(scalar) < 1e-6f)
     {
-        return Vector2D(0.0f, 0.0f); // avoid division by zero
+        return {0.0f, 0.0f}; // avoid division by zero
     }
-    return Vector2D(x / scalar, y / scalar);
+    return {x / scalar, y / scalar};
 }
 
 // compound assignment operators
@@ -68,14 +68,14 @@ Vector2D &Vector2D::operator-=(const Vector2D &other)
     return *this;
 }
 
-Vector2D &Vector2D::operator*=(float scalar)
+Vector2D &Vector2D::operator*=(float const scalar)
 {
     x *= scalar;
     y *= scalar;
     return *this;
 }
 
-Vector2D &Vector2D::operator/=(float scalar)
+Vector2D &Vector2D::operator/=(float const scalar)
 {
     if (std::abs(scalar) >= 1e-6f)
     {
@@ -92,7 +92,7 @@ Vector2D &Vector2D::operator/=(float scalar)
 // comparison operators
 bool Vector2D::operator==(const Vector2D &other) const
 {
-    const float epsilon = 1e-6f;
+    constexpr float epsilon = 1e-6f;
     return std::abs(x - other.x) < epsilon && std::abs(y - other.y) < epsilon;
 }
 
@@ -104,7 +104,7 @@ bool Vector2D::operator!=(const Vector2D &other) const
 // unary operators
 Vector2D Vector2D::operator-() const
 {
-    return Vector2D(-x, -y);
+    return {-x, -y};
 }
 
 // vector operations
@@ -120,17 +120,16 @@ float Vector2D::magnitudeSquared() const
 
 Vector2D Vector2D::normalized() const
 {
-    float mag = magnitude();
-    if (mag < 1e-6f)
-    {
-        return Vector2D(0.0f, 0.0f);
+    const float mag = magnitude();
+    if (mag < 1e-6f) {
+        return {0.0f, 0.0f};
     }
-    return Vector2D(x / mag, y / mag);
+    return {x / mag, y / mag};
 }
 
 void Vector2D::normalize()
 {
-    float mag = magnitude();
+    const float mag = magnitude();
     if (mag >= 1e-6f)
     {
         x /= mag;
@@ -155,15 +154,15 @@ float Vector2D::cross(const Vector2D &other) const
 
 float Vector2D::distanceTo(const Vector2D &other) const
 {
-    float dx = x - other.x;
-    float dy = y - other.y;
+    const float dx = x - other.x;
+    const float dy = y - other.y;
     return std::sqrt(dx * dx + dy * dy);
 }
 
 float Vector2D::distanceSquaredTo(const Vector2D &other) const
 {
-    float dx = x - other.x;
-    float dy = y - other.y;
+    const float dx = x - other.x;
+    const float dy = y - other.y;
     return dx * dx + dy * dy;
 }
 
@@ -173,7 +172,7 @@ void Vector2D::setZero()
     x = y = 0.0f;
 }
 
-bool Vector2D::isZero(float epsilon) const
+bool Vector2D::isZero(const float epsilon) const
 {
     return std::abs(x) < epsilon && std::abs(y) < epsilon;
 }
@@ -181,27 +180,26 @@ bool Vector2D::isZero(float epsilon) const
 // static utility functions
 Vector2D Vector2D::zero()
 {
-    return Vector2D(0.0f, 0.0f);
+    return {0.0f, 0.0f};
 }
 
 Vector2D Vector2D::up()
 {
-    return Vector2D(0.0f, 1.0f);
+    return {0.0f, 1.0f};
 }
 
 Vector2D Vector2D::down()
 {
-    return Vector2D(0.0f, -1.0f);
+    return {0.0f, -1.0f};
 }
 
 Vector2D Vector2D::left()
 {
-    return Vector2D(-1.0f, 0.0f);
+    return {-1.0f, 0.0f};
 }
 
-Vector2D Vector2D::right()
-{
-    return Vector2D(1.0f, 0.0f);
+Vector2D Vector2D::right() {
+    return{1.0f, 0.0f};
 }
 
 // stream operators
@@ -218,7 +216,7 @@ std::istream &operator>>(std::istream &is, Vector2D &vec)
 }
 
 // global operator for scalar-first multiplication
-Vector2D operator*(float scalar, const Vector2D &vector)
+Vector2D operator*(const float scalar, const Vector2D &vector)
 {
     return vector * scalar;
 }

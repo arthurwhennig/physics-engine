@@ -5,6 +5,8 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
+#pragma once
+
 #include <memory>
 #include <vector>
 
@@ -38,10 +40,10 @@ public:
     // check if this generator affects the given body
     virtual bool isAffected(std::shared_ptr<RigidBody> body) = 0;
 
-    // update the current time by the given time delta (only overriden by timed generators)
+    // update the current time by the given time delta (only overridden by timed generators)
     virtual void updateTime(float timeDelta) = 0;
 
-    // check if this generator has expired (only overriden by timed generators)
+    // check if this generator has expired (only overridden by timed generators)
     virtual bool hasExpired() const { return false; };
 
     // clear all affected bodies
@@ -53,21 +55,21 @@ public:
  *
  * applies a constant gravitational force to all dynamic bodies.
  */
-class GravityGenerator : public ForceGenerator
+class GravityGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
     Vector2D gravity;
 
 public:
-    GravityGenerator(const Vector2D &g) : gravity(g) {}
+    explicit GravityGenerator(const Vector2D &g) : gravity(g) {}
 
     void applyForce() override;
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     bool isAffected(std::shared_ptr<RigidBody> body) override;
-    void clearAffected() { affectedBodies.clear(); };
-    void updateTime(float timeDelta) {};
+    void clearAffected() override { affectedBodies.clear(); };
+    void updateTime(float timeDelta) override {};
 
     const Vector2D &
     getGravity() const
@@ -83,7 +85,7 @@ public:
  * applies drag force proportional to velocity (linear drag) and
  * velocity squared (quadratic drag).
  */
-class DragGenerator : public ForceGenerator
+class DragGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -91,20 +93,20 @@ private:
     float k2; // quadratic drag coefficient
 
 public:
-    DragGenerator(float linear, float quadratic) : k1(linear), k2(quadratic) {}
+    DragGenerator(const float linear, const float quadratic) : k1(linear), k2(quadratic) {}
 
     void applyForce() override;
     bool isAffected(std::shared_ptr<RigidBody> body) override;
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
-    void clearAffected() { affectedBodies.clear(); };
-    void updateTime(float timeDelta) {};
+    void clearAffected() override { affectedBodies.clear(); };
+    void updateTime(float timeDelta) override {};
 
     float getLinearDrag() const { return k1; }
-    void setLinearDrag(float drag) { k1 = drag; }
+    void setLinearDrag(const float drag) { k1 = drag; }
 
     float getQuadraticDrag() const { return k2; }
-    void setQuadraticDrag(float drag) { k2 = drag; }
+    void setQuadraticDrag(const float drag) { k2 = drag; }
 };
 
 /**
@@ -113,7 +115,7 @@ public:
  * creates a spring connection between two rigid bodies or
  * between a rigid body and a fixed point in world space.
  */
-class SpringGenerator : public ForceGenerator
+class SpringGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -139,18 +141,18 @@ public:
     bool isAffected(std::shared_ptr<RigidBody> body) override;
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
-    void clearAffected() { affectedBodies.clear(); };
-    void updateTime(float timeDelta) {};
+    void clearAffected() override { affectedBodies.clear(); };
+    void updateTime(float timeDelta) override {};
 
     // getters and setters
     float getSpringConstant() const { return springConstant; }
-    void setSpringConstant(float k) { springConstant = k; }
+    void setSpringConstant(const float k) { springConstant = k; }
 
     float getRestLength() const { return restLength; }
-    void setRestLength(float length) { restLength = length; }
+    void setRestLength(const float length) { restLength = length; }
 
     float getDamping() const { return damping; }
-    void setDamping(float damp) { damping = damp; }
+    void setDamping(const float damp) { damping = damp; }
 
 private:
     Vector2D getWorldPoint(std::shared_ptr<RigidBody> body, const Vector2D &localPoint) const;
@@ -161,21 +163,21 @@ private:
  *
  * applies a constant force to specific bodies.
  */
-class ConstantForceGenerator : public ForceGenerator
+class ConstantForceGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
     Vector2D force;
 
 public:
-    ConstantForceGenerator(const Vector2D &f) : force(f) {}
+    explicit ConstantForceGenerator(const Vector2D &f) : force(f) {}
 
     void applyForce() override;
     bool isAffected(std::shared_ptr<RigidBody> body) override;
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
-    void clearAffected() { affectedBodies.clear(); };
-    void updateTime(float timeDelta) {};
+    void clearAffected() override { affectedBodies.clear(); };
+    void updateTime(float timeDelta) override {};
 
     const Vector2D &getForce() const { return force; }
     void setForce(const Vector2D &f) { force = f; }
@@ -187,7 +189,7 @@ public:
  * applies an explosion force that decreases with distance from a center point.
  * this is typically used as a one-time effect.
  */
-class ExplosionGenerator : public ForceGenerator
+class ExplosionGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -207,5 +209,5 @@ public:
     void updateTime(float timeDelta) override;
     bool hasExpired() const override;
 
-    void clearAffected() { affectedBodies.clear(); };
+    void clearAffected() override { affectedBodies.clear(); };
 };

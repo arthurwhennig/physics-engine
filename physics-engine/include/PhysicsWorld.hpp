@@ -5,6 +5,8 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
+#pragma once
+
 #include <vector>
 #include <memory>
 
@@ -42,7 +44,7 @@ private:
 
 public:
     // constructor and destructor
-    PhysicsWorld(const Vector2D &gravity = Vector2D(0.0f, -9.81f));
+    explicit PhysicsWorld(const Vector2D &gravity = Vector2D(0.0f, -9.81f));
     ~PhysicsWorld();
 
     // body management
@@ -64,19 +66,19 @@ public:
     // world properties
     const Vector2D &getGravity() const { return gravity; }
     void setGravity(const Vector2D &g) { gravity = g; }
-    void setDimensions(Vector2D &dim) { dimensions = dim; }
+    void setDimensions(const Vector2D &dim) { dimensions = dim; }
     const Vector2D &getDimensions() const { return dimensions; }
 
     // damping
     float getDamping() const { return damping; }
-    void setDamping(float d) { damping = std::max(0.0f, std::min(1.0f, d)); }
+    void setDamping(const float d) { damping = std::max(0.0f, std::min(1.0f, d)); }
 
     // simulation parameters
     int getVelocityIterations() const { return velocityIterations; }
-    void setVelocityIterations(int iterations) { velocityIterations = std::max(1, iterations); }
+    void setVelocityIterations(const int iterations) { velocityIterations = std::max(1, iterations); }
 
     int getPositionIterations() const { return positionIterations; }
-    void setPositionIterations(int iterations) { positionIterations = std::max(1, iterations); }
+    void setPositionIterations(const int iterations) { positionIterations = std::max(1, iterations); }
 
     // simulation step
     void step(float deltaTime);
