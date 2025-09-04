@@ -193,16 +193,6 @@ void RigidBody::integrate(const float deltaTime)
         rotation += 2.0f * M_PI;
     while (rotation >= 2.0f * M_PI)
         rotation -= 2.0f * M_PI;
-
-    // check if body should go to sleep
-    constexpr float sleepEpsilon = 0.1f;
-    if (velocity.magnitudeSquared() < sleepEpsilon * sleepEpsilon &&
-        std::abs(angularVelocity) < sleepEpsilon)
-    {
-        awake = false;
-        velocity.setZero();
-        angularVelocity = 0.0f;
-    }
 }
 
 void RigidBody::clearAccumulators()

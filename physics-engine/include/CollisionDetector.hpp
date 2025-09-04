@@ -52,8 +52,8 @@ public:
     void clearCollisions() { collisions.clear(); }
 
     // collision resolution
-    void resolveCollisions();
-    void resolveCollision(CollisionInfo &collision);
+    void resolveCollisions() const;
+    static void resolveCollision(const CollisionInfo &collision);
 
     // primitive collision tests
     static bool testCircleCircle(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
@@ -63,7 +63,7 @@ public:
     static float calculateSeparatingVelocity(const CollisionInfo &collision);
 
     // broad phase collision detection (spatial partitioning could be added here)
-    std::vector<std::pair<size_t, size_t>> broadPhase(const std::vector<std::shared_ptr<RigidBody>> &bodies);
+    static std::vector<std::pair<size_t, size_t>> broadPhase(const std::vector<std::shared_ptr<RigidBody>> &bodies);
 
     // debug information
     void printCollisionInfo() const;
@@ -71,9 +71,9 @@ public:
 
 private:
     // helper methods for collision resolution
-    void resolveVelocity(CollisionInfo &collision);
-    void resolvePosition(CollisionInfo &collision);
+    static void resolveVelocity(const CollisionInfo &collision) ;
+    static void resolvePosition(const CollisionInfo &collision);
 
-    float calculateRestitution(const CollisionInfo &collision) const;
-    float calculateFriction(const CollisionInfo &collision) const;
+    static float calculateRestitution(const CollisionInfo &collision);
+    static float calculateFriction(const CollisionInfo &collision) ;
 };

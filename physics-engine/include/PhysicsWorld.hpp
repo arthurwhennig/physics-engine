@@ -51,16 +51,16 @@ public:
     std::shared_ptr<RigidBody> createBody(const Vector2D &position,
                                           float mass = 1.0f,
                                           float radius = 1.0f);
-    bool addBody(std::shared_ptr<RigidBody> body);
-    bool removeBody(std::shared_ptr<RigidBody> body);
+    bool addBody(const std::shared_ptr<RigidBody>& body);
+    bool removeBody(const std::shared_ptr<RigidBody>& body);
     void clearBodies();
 
     const std::vector<std::shared_ptr<RigidBody>> &getBodies() const { return bodies; }
-    size_t getBodyCount() const { return bodies.size(); }
+    int getBodyCount() const { return static_cast<int>(bodies.size()); }
 
     // force generator management
-    bool addForceGenerator(std::shared_ptr<ForceGenerator> generator);
-    bool removeForceGenerator(std::shared_ptr<ForceGenerator> generator);
+    bool addForceGenerator(const std::shared_ptr<ForceGenerator>& generator);
+    bool removeForceGenerator(const std::shared_ptr<ForceGenerator>& generator);
     void clearForceGenerators();
 
     // world properties
@@ -81,30 +81,32 @@ public:
     void setPositionIterations(const int iterations) { positionIterations = std::max(1, iterations); }
 
     // simulation step
-    void step(float deltaTime);
+    void step(float timeDelta) const;
 
     // individual simulation phases
-    void applyForces(float deltaTime);
-    void integrate(float deltaTime);
-    void detectCollisions();
-    void resolveCollisions();
-    void updateSleepState();
+    void applyForces(float timeDelta) const;
+    void integrate(float timeDelta) const;
+    void detectCollisions() const;
+    void resolveCollisions() const;
+    void updateSleepState() const;
 
     // utility methods
     std::shared_ptr<RigidBody> getBodyAt(const Vector2D &point) const;
     std::vector<std::shared_ptr<RigidBody>> getBodiesInRadius(const Vector2D &center, float radius) const;
 
-    void setAllBodiesAwake();
-    void applyExplosion(const Vector2D &center, float force, float radius);
+    void setAllBodiesAwake() const;
+    void applyExplosion(const Vector2D &center, float force, float radius) const;
 
     // debug and statistics
     void printDebugInfo() const;
+    void printBodiesInfo() const;
     int getAwakeBodyCount() const;
     int getSleepingBodyCount() const;
 
 private:
     // internal helper methods
-    void applyGravity();
-    void applyDamping();
-    void removeBodiesMarkedForDeletion();
+    void applyGravity() const;
+    void applyDamping() const;
+
+    static void removeBodiesMarkedForDeletion();
 };

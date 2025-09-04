@@ -129,12 +129,12 @@ private:
     
 public:
     // spring between two bodies
-    SpringGenerator(std::shared_ptr<RigidBody> a, std::shared_ptr<RigidBody> b,
+    SpringGenerator(const std::shared_ptr<RigidBody>& a, const std::shared_ptr<RigidBody>& b,
                     const Vector2D &localA, const Vector2D &localB,
                     float k, float restLen, float damp = 0.0f);
 
     // spring to fixed point
-    SpringGenerator(std::shared_ptr<RigidBody> body, const Vector2D &worldPoint,
+    SpringGenerator(const std::shared_ptr<RigidBody>& body, const Vector2D &worldPoint,
                     const Vector2D &localPoint, float k, float restLen, float damp = 0.0f);
 
     void applyForce() override;
@@ -155,7 +155,7 @@ public:
     void setDamping(const float damp) { damping = damp; }
 
 private:
-    Vector2D getWorldPoint(std::shared_ptr<RigidBody> body, const Vector2D &localPoint) const;
+    static Vector2D getWorldPoint(const std::shared_ptr<RigidBody>& body, const Vector2D &localPoint) ;
 };
 
 /**
