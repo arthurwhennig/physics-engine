@@ -55,7 +55,7 @@ public:
  *
  * applies a constant gravitational force to all dynamic bodies.
  */
-class GravityGenerator final : public ForceGenerator
+class GravityGenerator : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -69,7 +69,7 @@ public:
     bool release(std::shared_ptr<RigidBody> body) override;
     bool isAffected(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override {};
+    void updateTime(float timeDelta) override = 0;
 
     const Vector2D &
     getGravity() const
@@ -85,7 +85,7 @@ public:
  * applies drag force proportional to velocity (linear drag) and
  * velocity squared (quadratic drag).
  */
-class DragGenerator final : public ForceGenerator
+class DragGenerator : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -100,7 +100,7 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override {};
+    void updateTime(float timeDelta) override = 0;
 
     float getLinearDrag() const { return k1; }
     void setLinearDrag(const float drag) { k1 = drag; }
@@ -115,7 +115,7 @@ public:
  * creates a spring connection between two rigid bodies or
  * between a rigid body and a fixed point in world space.
  */
-class SpringGenerator final : public ForceGenerator
+class SpringGenerator : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -142,7 +142,7 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override {};
+    void updateTime(float timeDelta) override = 0;
 
     // getters and setters
     float getSpringConstant() const { return springConstant; }
@@ -163,7 +163,7 @@ private:
  *
  * applies a constant force to specific bodies.
  */
-class ConstantForceGenerator final : public ForceGenerator
+class ConstantForceGenerator : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -177,7 +177,7 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override {};
+    void updateTime(float timeDelta) override = 0;
 
     const Vector2D &getForce() const { return force; }
     void setForce(const Vector2D &f) { force = f; }

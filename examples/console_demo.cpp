@@ -2,7 +2,6 @@
 // Created by Arthur Hennig on 04.09.2025.
 //
 
-#include <iomanip>
 #include <iostream>
 #include <thread>
 
