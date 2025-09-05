@@ -55,7 +55,7 @@ echo ""
 echo "Built the following executables:"
 EXECUTABLES=("console_demo" "graphics_demo")
 
-for exec in $EXECUTABLES
+for exec in "${EXECUTABLES[@]}"
 do
   if [ -f "$exec" ]; then
     echo "✓ $exec - Successful build"
@@ -67,7 +67,7 @@ done
 echo ""
 echo "To run the examples:"
 echo "  cd $BUILD_DIR"
-for exec in $EXECUTABLES;
+for exec in "${EXECUTABLES[@]}"
 do
   if [ -f "$exec" ]; then
     echo "  ./$exec"

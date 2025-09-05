@@ -55,8 +55,8 @@ public:
     bool removeBody(const std::shared_ptr<RigidBody>& body);
     void clearBodies();
 
-    const std::vector<std::shared_ptr<RigidBody>> &getBodies() const { return bodies; }
-    int getBodyCount() const { return static_cast<int>(bodies.size()); }
+    [[nodiscard]] const std::vector<std::shared_ptr<RigidBody>> &getBodies() const { return bodies; }
+    [[nodiscard]] int getBodyCount() const { return static_cast<int>(bodies.size()); }
 
     // force generator management
     bool addForceGenerator(const std::shared_ptr<ForceGenerator>& generator);
@@ -64,20 +64,20 @@ public:
     void clearForceGenerators();
 
     // world properties
-    const Vector2D &getGravity() const { return gravity; }
+    [[nodiscard]] const Vector2D &getGravity() const { return gravity; }
     void setGravity(const Vector2D &g) { gravity = g; }
     void setDimensions(const Vector2D &dim) { dimensions = dim; }
-    const Vector2D &getDimensions() const { return dimensions; }
+    [[nodiscard]] const Vector2D &getDimensions() const { return dimensions; }
 
     // damping
-    float getDamping() const { return damping; }
+    [[nodiscard]] float getDamping() const { return damping; }
     void setDamping(const float d) { damping = std::max(0.0f, std::min(1.0f, d)); }
 
     // simulation parameters
-    int getVelocityIterations() const { return velocityIterations; }
+    [[nodiscard]] int getVelocityIterations() const { return velocityIterations; }
     void setVelocityIterations(const int iterations) { velocityIterations = std::max(1, iterations); }
 
-    int getPositionIterations() const { return positionIterations; }
+    [[nodiscard]] int getPositionIterations() const { return positionIterations; }
     void setPositionIterations(const int iterations) { positionIterations = std::max(1, iterations); }
 
     // simulation step
@@ -91,8 +91,8 @@ public:
     void updateSleepState() const;
 
     // utility methods
-    std::shared_ptr<RigidBody> getBodyAt(const Vector2D &point) const;
-    std::vector<std::shared_ptr<RigidBody>> getBodiesInRadius(const Vector2D &center, float radius) const;
+    [[nodiscard]] std::shared_ptr<RigidBody> getBodyAt(const Vector2D &point) const;
+    [[nodiscard]] std::vector<std::shared_ptr<RigidBody>> getBodiesInRadius(const Vector2D &center, float radius) const;
 
     void setAllBodiesAwake() const;
     void applyExplosion(const Vector2D &center, float force, float radius) const;
@@ -100,8 +100,8 @@ public:
     // debug and statistics
     void printDebugInfo() const;
     void printBodiesInfo() const;
-    int getAwakeBodyCount() const;
-    int getSleepingBodyCount() const;
+    [[nodiscard]] int getAwakeBodyCount() const;
+    [[nodiscard]] int getSleepingBodyCount() const;
 
 private:
     // internal helper methods

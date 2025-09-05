@@ -44,7 +44,7 @@ public:
     virtual void updateTime(float timeDelta) = 0;
 
     // check if this generator has expired (only overridden by timed generators)
-    virtual bool hasExpired() const { return false; };
+    [[nodiscard]] virtual bool hasExpired() const { return false; };
 
     // clear all affected bodies
     virtual void clearAffected() = 0;
@@ -55,7 +55,7 @@ public:
  *
  * applies a constant gravitational force to all dynamic bodies.
  */
-class GravityGenerator : public ForceGenerator
+class GravityGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -69,9 +69,9 @@ public:
     bool release(std::shared_ptr<RigidBody> body) override;
     bool isAffected(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override = 0;
+    void updateTime(float timeDelta) override {};
 
-    const Vector2D &
+    [[nodiscard]] const Vector2D &
     getGravity() const
     {
         return gravity;
@@ -85,7 +85,7 @@ public:
  * applies drag force proportional to velocity (linear drag) and
  * velocity squared (quadratic drag).
  */
-class DragGenerator : public ForceGenerator
+class DragGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -100,12 +100,12 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override = 0;
+    void updateTime(float timeDelta) override {};
 
-    float getLinearDrag() const { return k1; }
+    [[nodiscard]] float getLinearDrag() const { return k1; }
     void setLinearDrag(const float drag) { k1 = drag; }
 
-    float getQuadraticDrag() const { return k2; }
+    [[nodiscard]] float getQuadraticDrag() const { return k2; }
     void setQuadraticDrag(const float drag) { k2 = drag; }
 };
 
@@ -115,7 +115,7 @@ public:
  * creates a spring connection between two rigid bodies or
  * between a rigid body and a fixed point in world space.
  */
-class SpringGenerator : public ForceGenerator
+class SpringGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -142,16 +142,16 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override = 0;
+    void updateTime(float timeDelta) override {};
 
     // getters and setters
-    float getSpringConstant() const { return springConstant; }
+    [[nodiscard]] float getSpringConstant() const { return springConstant; }
     void setSpringConstant(const float k) { springConstant = k; }
 
-    float getRestLength() const { return restLength; }
+    [[nodiscard]] float getRestLength() const { return restLength; }
     void setRestLength(const float length) { restLength = length; }
 
-    float getDamping() const { return damping; }
+    [[nodiscard]] float getDamping() const { return damping; }
     void setDamping(const float damp) { damping = damp; }
 
 private:
@@ -163,7 +163,7 @@ private:
  *
  * applies a constant force to specific bodies.
  */
-class ConstantForceGenerator : public ForceGenerator
+class ConstantForceGenerator final : public ForceGenerator
 {
 private:
     std::vector<std::shared_ptr<RigidBody>> affectedBodies;
@@ -177,9 +177,9 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void clearAffected() override { affectedBodies.clear(); };
-    void updateTime(float timeDelta) override = 0;
+    void updateTime(float timeDelta) override {};
 
-    const Vector2D &getForce() const { return force; }
+    [[nodiscard]] const Vector2D &getForce() const { return force; }
     void setForce(const Vector2D &f) { force = f; }
 };
 
@@ -207,7 +207,7 @@ public:
     bool affect(std::shared_ptr<RigidBody> body) override;
     bool release(std::shared_ptr<RigidBody> body) override;
     void updateTime(float timeDelta) override;
-    bool hasExpired() const override;
+    [[nodiscard]] bool hasExpired() const override;
 
     void clearAffected() override { affectedBodies.clear(); };
 };

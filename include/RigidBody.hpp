@@ -67,54 +67,54 @@ public:
     ~RigidBody();
 
     // transform methods
-    const Vector2D &getPosition() const { return position; }
+    [[nodiscard]] const Vector2D &getPosition() const { return position; }
     void setPosition(const Vector2D &pos) { position = pos; }
 
-    float getRotation() const { return rotation; }
+    [[nodiscard]] float getRotation() const { return rotation; }
     void setRotation(const float rot) { rotation = rot; }
 
     // velocity methods
-    const Vector2D &getVelocity() const { return velocity; }
+    [[nodiscard]] const Vector2D &getVelocity() const { return velocity; }
     void setVelocity(const Vector2D &vel) { velocity = vel; }
 
-    float getAngularVelocity() const { return angularVelocity; }
+    [[nodiscard]] float getAngularVelocity() const { return angularVelocity; }
     void setAngularVelocity(const float angVel) { angularVelocity = angVel; }
 
     // acceleration methods
-    const Vector2D &getAcceleration() const { return acceleration; }
+    [[nodiscard]] const Vector2D &getAcceleration() const { return acceleration; }
     void setAcceleration(const Vector2D &acc) { acceleration = acc; }
 
     // mass and inertia
-    float getMass() const { return mass; }
-    float getInverseMass() const { return inverseMass; }
+    [[nodiscard]] float getMass() const { return mass; }
+    [[nodiscard]] float getInverseMass() const { return inverseMass; }
     void setMass(float mass);
 
-    float getMomentOfInertia() const { return momentOfInertia; }
+    [[nodiscard]] float getMomentOfInertia() const { return momentOfInertia; }
     void setMomentOfInertia(float inertia);
 
     // material properties
-    float getRestitution() const { return restitution; }
+    [[nodiscard]] float getRestitution() const { return restitution; }
     void setRestitution(const float rest) { restitution = std::max(0.0f, std::min(1.0f, rest)); }
 
-    float getFriction() const { return friction; }
+    [[nodiscard]] float getFriction() const { return friction; }
     void setFriction(const float fric) { friction = std::max(0.0f, fric); }
 
-    float getDrag() const { return drag; }
+    [[nodiscard]] float getDrag() const { return drag; }
     void setDrag(const float d) { drag = std::max(0.0f, d); }
 
     // body type
-    BodyType getBodyType() const { return bodyType; }
+    [[nodiscard]] BodyType getBodyType() const { return bodyType; }
     void setBodyType(BodyType type);
 
-    bool isStatic() const { return bodyType == BodyType::STATIC; }
-    bool isDynamic() const { return bodyType == BodyType::DYNAMIC; }
+    [[nodiscard]] bool isStatic() const { return bodyType == BodyType::STATIC; }
+    [[nodiscard]] bool isDynamic() const { return bodyType == BodyType::DYNAMIC; }
 
     // shape properties
-    float getRadius() const { return radius; }
+    [[nodiscard]] float getRadius() const { return radius; }
     void setRadius(const float r) { radius = std::max(0.1f, r); }
 
     // sleep state
-    bool isAwake() const { return awake; }
+    [[nodiscard]] bool isAwake() const { return awake; }
     void setAwake(const bool a) { awake = a; }
 
     // force and impulse application
@@ -130,8 +130,8 @@ public:
     void clearAccumulators();
 
     // utility methods
-    Vector2D getPointVelocity(const Vector2D &point) const;
-    bool hasFiniteMass() const { return inverseMass > 0.0f; }
+    [[nodiscard]] Vector2D getPointVelocity(const Vector2D &point) const;
+    [[nodiscard]] bool hasFiniteMass() const { return inverseMass > 0.0f; }
 
     // debug information
     void printDebugInfo() const;

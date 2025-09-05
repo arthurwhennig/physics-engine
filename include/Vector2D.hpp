@@ -50,20 +50,20 @@ public:
     Vector2D operator-() const;
 
     // vector operations
-    float magnitude() const;
-    float magnitudeSquared() const;
-    Vector2D normalized() const;
+    [[nodiscard]] float magnitude() const;
+    [[nodiscard]] float magnitudeSquared() const;
+    [[nodiscard]] Vector2D normalized() const;
     void normalize();
 
-    float dot(const Vector2D &other) const;
-    float cross(const Vector2D &other) const; // returns scalar for 2D cross product
+    [[nodiscard]] float dot(const Vector2D &other) const;
+    [[nodiscard]] float cross(const Vector2D &other) const; // returns scalar for 2D cross product
 
-    float distanceTo(const Vector2D &other) const;
-    float distanceSquaredTo(const Vector2D &other) const;
+    [[nodiscard]] float distanceTo(const Vector2D &other) const;
+    [[nodiscard]] float distanceSquaredTo(const Vector2D &other) const;
 
     // utility functions
     void setZero();
-    bool isZero(float epsilon = 1e-6f) const;
+    [[nodiscard]] bool isZero(float epsilon = 1e-6f) const;
 
     // static utility functions
     static Vector2D zero();
