@@ -1,5 +1,5 @@
 //
-//  CollisionDetector.hpp
+//  CollisionDetector.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 04.09.2025.
@@ -9,12 +9,12 @@
 #include <vector>
 #include <memory>
 
-#include "RigidBody.hpp"
-#include "Vector2D.hpp"
+#include "RigidBody.h"
+#include "Vector2D.h"
 
-#ifndef CollisionDetector_h
-#define CollisionDetector_h
-#endif /* CollisionDetector_h */
+#ifndef PHYSICSENGINE_COLLISIONDETECTOR_H
+#define PHYSICSENGINE_COLLISIONDETECTOR_H
+#endif //PHYSICSENGINE_COLLISIONDETECTOR_H
 
 /**
  * @brief structure to hold collision information
@@ -48,7 +48,7 @@ public:
 
     // main collision detection methods
     void detectCollisions(const std::vector<std::shared_ptr<RigidBody>> &bodies);
-    const std::vector<CollisionInfo> &getCollisions() const { return collisions; }
+    [[nodiscard]] const std::vector<CollisionInfo> &getCollisions() const { return collisions; }
     void clearCollisions() { collisions.clear(); }
 
     // collision resolution
@@ -57,6 +57,8 @@ public:
 
     // primitive collision tests
     static bool testCircleCircle(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
+
+    bool testCollision(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
 
     // utility methods
     static Vector2D getContactPoint(const RigidBody &bodyA, const RigidBody &bodyB);
@@ -67,7 +69,7 @@ public:
 
     // debug information
     void printCollisionInfo() const;
-    size_t getCollisionCount() const { return collisions.size(); }
+    [[nodiscard]] int getCollisionCount() const { return static_cast<int>(collisions.size()); }
 
 private:
     // helper methods for collision resolution

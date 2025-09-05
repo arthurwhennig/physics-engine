@@ -1,5 +1,5 @@
 //
-//  ForceGenerator.hpp
+//  ForceGenerator.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 04.09.2025.
@@ -10,12 +10,12 @@
 #include <memory>
 #include <vector>
 
-#include "RigidBody.hpp"
-#include "Vector2D.hpp"
+#include "RigidBody.h"
+#include "Vector2D.h"
 
-#ifndef ForceGenerator_h
-#define ForceGenerator_h
-#endif /* ForceGenerator_h */
+#ifndef PHYSICSENGINE_FORCEGENERATOR_H
+#define PHYSICSENGINE_FORCEGENERATOR_H
+#endif //PHYSICSENGINE_FORCEGENERATOR_H
 
 /**
  * @brief base class for force generators

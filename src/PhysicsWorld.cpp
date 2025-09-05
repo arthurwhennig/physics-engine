@@ -1,10 +1,13 @@
 //
-// Created by Arthur Hennig on 04.09.2025.
+//  PhysicsWorld.cpp
+//  physics-engine
+//
+//  Created by Arthur Hennig on 04.09.2025.
 //
 
-#include "PhysicsWorld.hpp"
-#include "CollisionDetector.hpp"
-#include "ForceGenerator.hpp"
+#include "PhysicsWorld.h"
+#include "CollisionDetector.h"
+#include "ForceGenerator.h"
 #include <iostream>
 #include <algorithm>
 
@@ -21,10 +24,10 @@ PhysicsWorld::~PhysicsWorld()
     clearForceGenerators();
 }
 
-// Body management
-std::shared_ptr<RigidBody> PhysicsWorld::createBody(const Vector2D &position, float mass, float radius)
+// body management
+std::shared_ptr<RigidBody> PhysicsWorld::createBody(const Vector2D &position, float mass)
 {
-    auto body = std::make_shared<RigidBody>(position, mass, radius);
+    auto body = std::make_shared<RigidBody>(position, mass);
     bodies.push_back(body);
     return body;
 }
@@ -266,7 +269,7 @@ int PhysicsWorld::getSleepingBodyCount() const
     return count;
 }
 
-// Private helper methods
+// private helper methods
 void PhysicsWorld::applyGravity() const {
     for (auto &body : bodies)
     {

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "Vector2D.hpp"
+#include "Vector2D.h"
 
 // constructors
 Vector2D::Vector2D() : x(0.0f), y(0.0f) {}
@@ -46,7 +46,7 @@ Vector2D Vector2D::operator*(float const scalar) const
 
 Vector2D Vector2D::operator/(float const scalar) const
 {
-    if (std::abs(scalar) < 1e-6f)
+    if (scalar == 0.0f)
     {
         return {0.0f, 0.0f}; // avoid division by zero
     }
@@ -127,6 +127,11 @@ Vector2D Vector2D::normalized() const
     return {x / mag, y / mag};
 }
 
+Vector2D Vector2D::orthogonal() const
+{
+    return {-y, x};
+}
+
 void Vector2D::normalize()
 {
     const float mag = magnitude();
@@ -170,6 +175,10 @@ float Vector2D::distanceSquaredTo(const Vector2D &other) const
 void Vector2D::setZero()
 {
     x = y = 0.0f;
+}
+
+bool Vector2D::isZero() const {
+    return x == 0.0f && y == 0.0f;
 }
 
 bool Vector2D::isZero(const float epsilon) const

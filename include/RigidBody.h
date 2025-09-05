@@ -1,16 +1,17 @@
 //
-//  RigidBody.hpp
+//  RigidBody.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 04.09.2025.
 //
 #pragma once
 
-#include "Vector2D.hpp"
+#include "Vector2D.h"
+#include "Polygon.h"
 
-#ifndef RigidBody_h
-#define RigidBody_h
-#endif /* RigidBody_h */
+#ifndef PHYSICSENGINE_RIGIDBODY_H
+#define PHYSICSENGINE_RIGIDBODY_H
+#endif //PHYSICSENGINE_RIGIDBODY_H
 
 /**
  * @brief represents a rigid body in 2D physics simulation
@@ -25,6 +26,12 @@ public:
     {
         STATIC, // immovable objects (like walls)
         DYNAMIC // objects affected by forces and gravity
+    };
+    enum class BodyShape { // standard shapes and polygons
+        CIRCLE,
+        POINT,
+        LINE,
+        POLYGON,
     };
 
 private:
@@ -52,19 +59,40 @@ private:
     Vector2D forceAccumulator;
     float torqueAccumulator;
 
+    // body metadata
+    BodyShape bodyShape;
     BodyType bodyType;
     bool awake; // sleep optimization
 
-    // shape properties (simple circle for now)
+    // shape properties
     float radius;
+    Polygon polygon;    // relative to 'position'
 
 public:
     // constructors
     RigidBody();
-    explicit RigidBody(const Vector2D &pos, float mass = 1.0f, float radius = 1.0f);
+    explicit RigidBody(const Vector2D &pos, float mass = 1.0f);
 
     // destructor
     ~RigidBody();
+
+    bool makePolygon(const std::vector<Vector2D> &points);
+
+    void makeCircle(float radius);
+
+    void makePoint();
+
+    void makeLine(const Vector2D &line);
+
+    void makeTriangle(float distToCenter);
+
+    void makeRectangle(float width, float height);
+
+    [[nodiscard]] bool contains(const Vector2D &point) const;
+
+    bool isCollision(const RigidBody &other) const;
+
+    void rotate(float degrees) const;
 
     // transform methods
     [[nodiscard]] const Vector2D &getPosition() const { return position; }

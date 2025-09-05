@@ -5,7 +5,7 @@
 #include <iostream>
 #include <thread>
 
-#include "PhysicsWorld.hpp"
+#include "PhysicsWorld.h"
 
 int main() {
     constexpr int DURATION = 12; // simulation duration in seconds
@@ -14,10 +14,10 @@ int main() {
     constexpr float TIME_STEP = 1.0f / FPS; // time delta for each integration
 
     auto world = PhysicsWorld(Vector2D(0, GRAVITY));
-    const auto falling = world.createBody(Vector2D(200, 200), 10, 30);
+    const auto falling = world.createBody(Vector2D(200, 200), 10);
     falling->setBodyType(RigidBody::BodyType::DYNAMIC);
     falling->setRestitution(0.9f);
-    const auto ground = world.createBody(Vector2D(200, 300), 0, 30);
+    const auto ground = world.createBody(Vector2D(200, 300), 0);
     ground->setBodyType(RigidBody::BodyType::STATIC);
     ground->setRestitution(0.8f);
 

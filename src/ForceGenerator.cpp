@@ -1,8 +1,11 @@
 //
-// Created by Arthur Hennig on 04.09.2025.
+//  ForceGenerator.cpp
+//  physics-engine
+//
+//  Created by Arthur Hennig on 04.09.2025.
 //
 
-#include "ForceGenerator.hpp"
+#include "ForceGenerator.h"
 #include <algorithm>
 
 // GravityGenerator implementation
@@ -48,6 +51,8 @@ bool GravityGenerator::release(const std::shared_ptr<RigidBody> body)
 }
 
 // DragGenerator implementation
+
+// applies the drag force to all affected bodies
 void DragGenerator::applyForce()
 {
     for (const auto &affected : affectedBodies)
@@ -70,6 +75,7 @@ void DragGenerator::applyForce()
     }
 }
 
+// returns true if the given body is affected by this generator
 bool DragGenerator::isAffected(std::shared_ptr<RigidBody> body)
 {
     return find(affectedBodies.begin(), affectedBodies.end(), body) != affectedBodies.end();

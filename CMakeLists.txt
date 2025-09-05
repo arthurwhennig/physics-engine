@@ -46,15 +46,21 @@ set(PHYSICS_ENGINE_SOURCES
         src/PhysicsWorld.cpp
         src/CollisionDetector.cpp
         src/ForceGenerator.cpp
+        src/Matrix2D.cpp
+        src/Utility.cpp
+        src/Polygon.cpp
 )
 
 # physics engine library headers
 set(PHYSICS_ENGINE_HEADERS
-        include/Vector2D.hpp
-        include/RigidBody.hpp
-        include/PhysicsWorld.hpp
-        include/CollisionDetector.hpp
-        include/ForceGenerator.hpp
+        include/Vector2D.h
+        include/RigidBody.h
+        include/PhysicsWorld.h
+        include/CollisionDetector.h
+        include/ForceGenerator.h
+        include/Matrix2D.h
+        include/Utility.h
+        include/Polygon.h
 )
 
 # create physics engine static library

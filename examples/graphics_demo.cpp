@@ -5,7 +5,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-#include "PhysicsWorld.hpp"
+#include "PhysicsWorld.h"
 
 int main()
 {
@@ -17,21 +17,24 @@ int main()
     constexpr float time_delta = 1.0f / FPS;
 
     PhysicsWorld world(Vector2D(0, gravity));
+    world.setDimensions(Vector2D(screen_width, screen_height));
 
     sf::RenderWindow window(sf::VideoMode({screen_width, screen_height}), "Physics Engine Graphics Demo");
     window.setFramerateLimit(FPS);
 
     // first object: simple circle with radius 30 which is falling down
-    std::shared_ptr<RigidBody> falling = world.createBody(Vector2D(200, 200), 10.0f, 30.0f); // dynamic body
+    const std::shared_ptr<RigidBody> falling = world.createBody(Vector2D(200, 200), 10.0f); // dynamic body
     falling->setBodyType(RigidBody::BodyType::DYNAMIC);
+    falling->makeCircle(30);
     const Vector2D *falling_position = &falling->getPosition();
 
     sf::CircleShape fallingShape(30);
     fallingShape.setFillColor(sf::Color::Red);
 
     // second object: simple static circle which serves as a ground
-    std::shared_ptr<RigidBody> ground = world.createBody(Vector2D(200, 350), 0.0f, 30.0f); // static body
+    const std::shared_ptr<RigidBody> ground = world.createBody(Vector2D(200, 350), 0.0f); // static body
     ground->setBodyType(RigidBody::BodyType::STATIC);
+    ground->makeCircle(50);
     const Vector2D *ground_position = &ground->getPosition();
 
     sf::CircleShape groundShape(30);

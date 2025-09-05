@@ -1,5 +1,5 @@
 //
-//  PhysicsWorld.hpp
+//  PhysicsWorld.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 04.09.2025.
@@ -10,14 +10,14 @@
 #include <vector>
 #include <memory>
 
-#include "RigidBody.hpp"
-#include "Vector2D.hpp"
-#include "ForceGenerator.hpp"
-#include "CollisionDetector.hpp"
+#include "RigidBody.h"
+#include "Vector2D.h"
+#include "ForceGenerator.h"
+#include "CollisionDetector.h"
 
-#ifndef PhysicsWorld_h
-#define PhysicsWorld_h
-#endif /* PhysicsWorld_h */
+#ifndef PHYSICSENGINE_PHYSICSWORLD_H
+#define PHYSICSENGINE_PHYSICSWORLD_H
+#endif //PHYSICSENGINE_PHYSICSWORLD_H
 
 /**
  * @brief manages the physics simulation world
@@ -49,8 +49,7 @@ public:
 
     // body management
     std::shared_ptr<RigidBody> createBody(const Vector2D &position,
-                                          float mass = 1.0f,
-                                          float radius = 1.0f);
+                                          float mass = 1.0f);
     bool addBody(const std::shared_ptr<RigidBody>& body);
     bool removeBody(const std::shared_ptr<RigidBody>& body);
     void clearBodies();

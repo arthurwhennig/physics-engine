@@ -1,5 +1,5 @@
 //
-//  Vector2D.hpp
+//  Vector2D.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 04.09.2025.
@@ -7,9 +7,9 @@
 
 #pragma once
 
-#ifndef Vector2D_h
-#define Vector2D_h
-#endif /* Vector2D_h */
+#ifndef PHYSICSENGINE_VECTOR2D_H
+#define PHYSICSENGINE_VECTOR2D_H
+#endif //PHYSICSENGINE_VECTOR2D_H
 
 /**
  * @brief 2D vector class for physics calculations
@@ -53,6 +53,7 @@ public:
     [[nodiscard]] float magnitude() const;
     [[nodiscard]] float magnitudeSquared() const;
     [[nodiscard]] Vector2D normalized() const;
+    [[nodiscard]] Vector2D orthogonal() const;
     void normalize();
 
     [[nodiscard]] float dot(const Vector2D &other) const;
@@ -63,6 +64,7 @@ public:
 
     // utility functions
     void setZero();
+    [[nodiscard]] bool isZero() const;
     [[nodiscard]] bool isZero(float epsilon = 1e-6f) const;
 
     // static utility functions
