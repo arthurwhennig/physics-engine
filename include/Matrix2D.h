@@ -1,5 +1,5 @@
 //
-//  Matrix2d.h
+//  Matrix2D.h
 //  physics-engine
 //
 //  Created by Arthur Hennig on 05.09.2025.
@@ -8,6 +8,7 @@
 #pragma once
 
 #include <Vector2D.h>
+#include <Utility.h>
 
 #ifndef PHYSICSENGINE_MATRIX2D_H
 #define PHYSICSENGINE_MATRIX2D_H
@@ -55,14 +56,14 @@ public:
     // utility functions
     void setZero();
     [[nodiscard]] bool isZero() const;
-    [[nodiscard]] bool isZero(float epsilon = 1e-6f) const;
+    [[nodiscard]] bool isZero(float epsilon = EPSILON) const;
 
     // static utility functions
     static Matrix2D zero() {
-        return Matrix2D(0.0f, 0.0f, 0.0f, 0.0f);
+        return {0.0f, 0.0f, 0.0f, 0.0f};
     }
     static Matrix2D identity() {
-        return Matrix2D(1.0f, 0.0f, 0.0f, 1.0f);
+        return {1.0f, 0.0f, 0.0f, 1.0f};
     }
 };
 

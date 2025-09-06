@@ -101,8 +101,8 @@ Matrix2D &Matrix2D::operator/=(const float scalar)
 // comparison operators
 bool Matrix2D::operator==(const Matrix2D &other) const
 {
-    const bool firstRow = std::abs(a - other.a) < epsilon && std::abs(b - other.b) < epsilon;
-    const bool secondRow = std::abs(c - other.c) < epsilon && std::abs(d - other.d) < epsilon;
+    const bool firstRow = std::abs(a - other.a) < EPSILON && std::abs(b - other.b) < EPSILON;
+    const bool secondRow = std::abs(c - other.c) < EPSILON && std::abs(d - other.d) < EPSILON;
     return firstRow && secondRow;
 }
 

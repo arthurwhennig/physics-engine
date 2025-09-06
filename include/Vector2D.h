@@ -11,6 +11,9 @@
 #define PHYSICSENGINE_VECTOR2D_H
 #endif //PHYSICSENGINE_VECTOR2D_H
 
+#include <iostream>
+#include <Utility.h>
+
 /**
  * @brief 2D vector class for physics calculations
  *
@@ -65,7 +68,7 @@ public:
     // utility functions
     void setZero();
     [[nodiscard]] bool isZero() const;
-    [[nodiscard]] bool isZero(float epsilon = 1e-6f) const;
+    [[nodiscard]] bool isZero(float epsilon = EPSILON) const;
 
     // static utility functions
     static Vector2D zero();

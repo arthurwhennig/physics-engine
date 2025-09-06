@@ -23,12 +23,30 @@ struct CollisionInfo
 {
     std::shared_ptr<RigidBody> bodyA;
     std::shared_ptr<RigidBody> bodyB;
-    Vector2D contactPoint;    // point of contact in world coordinates
-    Vector2D contactNormal;   // normal from A to B
-    float penetrationDepth;   // how deep the collision is
-    float separatingVelocity; // velocity in direction of contact normal
+    
+    // contact manifold (polygon collisions can have multiple contact points)
+    static constexpr int MAX_CONTACT_POINTS = 2;
+    Vector2D contactPoints[MAX_CONTACT_POINTS];  // points of contact in world coordinates
+    int contactCount;                            // number of active contact points
+    
+    Vector2D contactNormal;     // normal from A to B
+    Vector2D penetration;       // smallest vector of translation needed to separate bodyA and bodyB
+    float separatingVelocity;   // velocity in direction of contact normal
 
-    CollisionInfo() : penetrationDepth(0.0f), separatingVelocity(0.0f) {}
+    CollisionInfo() : contactCount(0), separatingVelocity(0.0f) {}
+    
+    // helper method to get primary contact point (for backward compatibility)
+    [[nodiscard]] Vector2D getContactPoint() const { return contactCount > 0 ? contactPoints[0] : Vector2D::zero(); }
+    [[nodiscard]] Vector2D getContactNormal() const { return contactNormal; }
+    [[nodiscard]] Vector2D getPenetration() const { return penetration; }
+    [[nodiscard]] float getPenetrationDepth() const { return penetration.magnitude(); };
+    
+    // add a contact point to the manifold
+    void addContactPoint(const Vector2D& point) {
+        if (contactCount < MAX_CONTACT_POINTS) {
+            contactPoints[contactCount++] = point;
+        }
+    }
 };
 
 /**
@@ -57,8 +75,10 @@ public:
 
     // primitive collision tests
     static bool testCircleCircle(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
-
-    bool testCollision(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
+    static bool testPolygonPolygon(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
+    static bool testCirclePolygon(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
+    
+    static bool testCollision(const RigidBody &bodyA, const RigidBody &bodyB, CollisionInfo &collision);
 
     // utility methods
     static Vector2D getContactPoint(const RigidBody &bodyA, const RigidBody &bodyB);
@@ -77,5 +97,20 @@ private:
     static void resolvePosition(const CollisionInfo &collision);
 
     static float calculateRestitution(const CollisionInfo &collision);
-    static float calculateFriction(const CollisionInfo &collision) ;
+    static float calculateFriction(const CollisionInfo &collision);
+
+    // polygon collision helper methods
+    struct SATResult {
+        bool collision;
+        Vector2D mtv;           // minimum translation vector
+        float penetration;
+        size_t referenceEdge;   // which edge of reference polygon;
+    };
+
+    static SATResult performSAT(const Polygon& polyA, const Polygon& polyB);
+    static void findContactPoints(const RigidBody& bodyA, const RigidBody& bodyB, 
+                                const SATResult& satResult, CollisionInfo& collision);
+    static std::vector<Vector2D> clipPolygonToLine(const std::vector<Vector2D>& polygon, 
+                                                  const Vector2D& linePoint, const Vector2D& lineNormal);
+    static float projectVertexOnAxis(const Vector2D& vertex, const Vector2D& axis);
 };

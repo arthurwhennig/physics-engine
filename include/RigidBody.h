@@ -36,7 +36,7 @@ public:
 
 private:
     // transform
-    Vector2D position;
+    Vector2D* position;
     float rotation; // rotation in radians
 
     // physics properties
@@ -45,15 +45,16 @@ private:
     float angularVelocity;
     float angularAcceleration;
 
+    // mass and inertia
     float mass;
-    float inverseMass;     // 1/mass, or 0 for static bodies
-    float momentOfInertia; // rotational inertia
-    float inverseInertia;  // 1/momentOfInertia
+    float inverseMass;      // 1/mass, or 0 for static bodies
+    float momentOfInertia;  // rotational inertia
+    float inverseInertia;   // 1/momentOfInertia
 
     // material properties
-    float restitution; // bounciness (0 = no bounce, 1 = perfect bounce)
-    float friction;    // surface friction coefficient
-    float drag;        // air resistance
+    float restitution;      // bounciness (0 = no bounce, 1 = perfect bounce)
+    float friction;         // surface friction coefficient
+    float drag;             // air resistance
 
     // forces and torques
     Vector2D forceAccumulator;
@@ -71,6 +72,7 @@ private:
 public:
     // constructors
     RigidBody();
+    explicit RigidBody(const Vector2D &pos);
     explicit RigidBody(const Vector2D &pos, float mass = 1.0f);
 
     // destructor
@@ -84,19 +86,19 @@ public:
 
     void makeLine(const Vector2D &line);
 
-    void makeTriangle(float distToCenter);
+    void makeTriangle(float width, float height);
 
     void makeRectangle(float width, float height);
 
     [[nodiscard]] bool contains(const Vector2D &point) const;
 
-    bool isCollision(const RigidBody &other) const;
+    [[nodiscard]] bool collidesWith(const RigidBody &other) const;
 
-    void rotate(float degrees) const;
+    void rotate(float degrees);
 
     // transform methods
-    [[nodiscard]] const Vector2D &getPosition() const { return position; }
-    void setPosition(const Vector2D &pos) { position = pos; }
+    [[nodiscard]] const Vector2D &getPosition() const { return *position; }
+    void setPosition(const Vector2D &pos) { position = new Vector2D(pos); }
 
     [[nodiscard]] float getRotation() const { return rotation; }
     void setRotation(const float rot) { rotation = rot; }
@@ -115,7 +117,7 @@ public:
     // mass and inertia
     [[nodiscard]] float getMass() const { return mass; }
     [[nodiscard]] float getInverseMass() const { return inverseMass; }
-    void setMass(float mass);
+    void setMass(float m);
 
     [[nodiscard]] float getMomentOfInertia() const { return momentOfInertia; }
     void setMomentOfInertia(float inertia);
@@ -140,6 +142,8 @@ public:
     // shape properties
     [[nodiscard]] float getRadius() const { return radius; }
     void setRadius(const float r) { radius = std::max(0.1f, r); }
+    [[nodiscard]] const Polygon& getPolygon() const { return polygon; }
+    [[nodiscard]] BodyShape getBodyShape() const { return bodyShape; }
 
     // sleep state
     [[nodiscard]] bool isAwake() const { return awake; }

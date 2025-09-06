@@ -53,7 +53,7 @@ cmake --build . --parallel "$JOBS"
 echo "=== Build Complete ==="
 echo ""
 echo "Built the following executables:"
-EXECUTABLES=("console_demo" "graphics_demo")
+EXECUTABLES=("console_demo" "graphics_demo" "collision_demo")
 
 for exec in "${EXECUTABLES[@]}"
 do

@@ -10,33 +10,45 @@
 
 #include "Vector2D.h"
 #include "RigidBody.h"
-#include "Matrix2D.h"
 #include "Utility.h"
 
 // constructors
 RigidBody::RigidBody()
-    : position(0.0f, 0.0f), rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
+    : rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
       angularVelocity(0.0f), angularAcceleration(0.0f), mass(1.0f), inverseMass(1.0f),
       momentOfInertia(1.0f), inverseInertia(1.0f), restitution(0.5f), friction(0.3f),
       drag(0.01f), forceAccumulator(0.0f, 0.0f), torqueAccumulator(0.0f), bodyShape(BodyShape::POINT),
       bodyType(BodyType::DYNAMIC), awake(true), radius(1.0f)
 {
-    polygon = Polygon(&position);
+    position = new Vector2D(0,0);
+    polygon = Polygon(position);
+}
+
+RigidBody::RigidBody(const Vector2D &pos) : rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
+      angularVelocity(0.0f), angularAcceleration(0.0f), mass(1.0f), inverseMass(1.0f),
+      momentOfInertia(1.0f), inverseInertia(1.0f), restitution(0.5f),
+      friction(0.3f), drag(0.01f), forceAccumulator(0.0f, 0.0f), torqueAccumulator(0.0f), bodyShape(BodyShape::POINT),
+      bodyType(BodyType::DYNAMIC), awake(true), radius(0)
+{
+    position = new Vector2D(pos);
+    polygon = Polygon(position);
 }
 
 RigidBody::RigidBody(const Vector2D &pos, const float mass)
-    : position(pos), rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
+    : rotation(0.0f), velocity(0.0f, 0.0f), acceleration(0.0f, 0.0f),
       angularVelocity(0.0f), angularAcceleration(0.0f), mass(mass), inverseMass(1.0f),
       momentOfInertia(1.0f), inverseInertia(1.0f), restitution(0.5f),
       friction(0.3f), drag(0.01f), forceAccumulator(0.0f, 0.0f), torqueAccumulator(0.0f), bodyShape(BodyShape::POINT),
       bodyType(BodyType::DYNAMIC), awake(true), radius(0)
 {
     setMass(mass);
-    polygon = Polygon(&position);
+    position = new Vector2D(pos);
+    polygon = Polygon(position);
 }
 
 // destructor
-RigidBody::~RigidBody() = default;
+RigidBody::~RigidBody()
+= default;
 
 // create a convex shape from this rigid body based on the points relative to the body position
 // note: the order should correspond to the counter-clockwise rotation of the polygon corners
@@ -45,7 +57,8 @@ bool RigidBody::makePolygon(const std::vector<Vector2D> &points) {
     if (points.size() < 3) return false; // not possible to create a polygon with less than 3 corners
     polygon.clear();
     polygon.addPoints(points);
-    if (!contains(position)) {
+    polygon.computeEdges();
+    if (!contains(*position)) { // the center position should be within the polygon
         polygon.clear();
         return false;
     }
@@ -70,14 +83,12 @@ void RigidBody::makeLine(const Vector2D &line) {
     polygon.addPoint(line); // special case: polygon used for only one position (not actually a polygon)
 }
 
-void RigidBody::makeTriangle(const float distToCenter) {
+void RigidBody::makeTriangle(const float width, const float height) {
     polygon.clear();
     bodyShape = BodyShape::POLYGON;
-    auto upper = Vector2D(0, distToCenter);
-    const float xDelta = cos(degreesToRadians(30)) * distToCenter;
-    const float yDelta = sin(degreesToRadians(30)) * distToCenter;
-    const auto left = Vector2D(-xDelta, -yDelta);
-    const auto right = Vector2D(xDelta, -yDelta);
+    const auto upper = Vector2D(0, height/2);
+    const auto left = Vector2D(-width/2, -height/2);
+    const auto right = Vector2D(width/2, -height/2);
     polygon.addPoint(upper);
     polygon.addPoint(left);
     polygon.addPoint(right);
@@ -96,29 +107,22 @@ void RigidBody::makeRectangle(const float width, const float height) {
     polygon.addPoint(leftLower);
     polygon.addPoint(rightLower);
     polygon.addPoint(rightUpper);
+    polygon.computeEdges();
 }
 
-bool RigidBody::contains(const Vector2D& point) const {
+bool RigidBody::contains(const Vector2D &point) const {
     return polygon.contains(point);
 }
 
 // returns true if the other body overlaps with this body
-bool RigidBody::isCollision(const RigidBody &other) const {
+bool RigidBody::collidesWith(const RigidBody &other) const {
     return polygon.overlaps(other.polygon);
 }
 
-// rotate the body polygon points
-void RigidBody::rotate(const float degrees) const {
+// rotate the body polygon points around the center position by the given number of degrees
+void RigidBody::rotate(const float degrees) {
     if (bodyShape == BodyShape::CIRCLE) return; // rotation does not affect a circle
-    const float radians = degreesToRadians(degrees);
-    const Matrix2D rotation_matrix (radians);
-
-    const int len = static_cast<int>(polygon.size());
-    for (int i = 0; i < len; ++i) {
-        const Vector2D newVec = rotation_matrix * *polygon[i];
-        polygon[i]->x = newVec.x;
-        polygon[i]->y = newVec.y;
-    }
+    polygon.rotate(degrees);
 }
 
 // mass and inertia
@@ -205,11 +209,13 @@ void RigidBody::addForceAtPoint(const Vector2D &force, const Vector2D &point)
 {
     if (bodyType == BodyType::STATIC)
         return;
+    if (bodyShape == BodyShape::POLYGON && !polygon.contains(point))
+        return;
 
     forceAccumulator += force;
 
     // calculate torque: τ = r × F
-    const Vector2D r = point - position;
+    const Vector2D r = point - *position;
     const float torque = r.cross(force);
     torqueAccumulator += torque;
 
@@ -242,14 +248,14 @@ void RigidBody::addImpulseAtPoint(const Vector2D &impulse, const Vector2D &point
     velocity += impulse * inverseMass;
 
     // calculate angular impulse
-    const Vector2D r = point - position;
+    const Vector2D r = point - *position;
     const float angularImpulse = r.cross(impulse);
     angularVelocity += angularImpulse * inverseInertia;
 
     awake = true;
 }
 
-// integration
+// sympletic Euler integration
 void RigidBody::integrate(const float deltaTime)
 {
     if (bodyType == BodyType::STATIC || !awake)
@@ -268,18 +274,14 @@ void RigidBody::integrate(const float deltaTime)
     angularVelocity += angularAcceleration * deltaTime;
 
     // apply damping
-    velocity *= std::pow(0.999f, deltaTime); // Simple velocity damping
+    velocity *= std::pow(0.999f, deltaTime); // simple velocity damping
     angularVelocity *= std::pow(0.999f, deltaTime);
 
     // integrate position: p = p0 + v*dt
-    position += velocity * deltaTime;
+    *position += velocity * deltaTime;
     rotation += angularVelocity * deltaTime;
-
-    // normalize rotation to [0, 2π]
-    while (rotation < 0.0f)
-        rotation += 2.0f * M_PI;
-    while (rotation >= 2.0f * M_PI)
-        rotation -= 2.0f * M_PI;
+    // normalize rotation to [0, 2π)
+    rotation = normalizeRadians(rotation);
 }
 
 void RigidBody::clearAccumulators()
@@ -291,7 +293,7 @@ void RigidBody::clearAccumulators()
 // utility methods
 Vector2D RigidBody::getPointVelocity(const Vector2D &point) const
 {
-    const Vector2D r = point - position;
+    const Vector2D r = point - *position;
     // v = v_center + ω × r
     const Vector2D rotationalVelocity(-r.y * angularVelocity, r.x * angularVelocity);
     return velocity + rotationalVelocity;
@@ -301,7 +303,7 @@ Vector2D RigidBody::getPointVelocity(const Vector2D &point) const
 void RigidBody::printDebugInfo() const
 {
     std::cout << "RigidBody Debug Info:\n";
-    std::cout << "  Position: " << position << "\n";
+    std::cout << "  Position: " << *position << "\n";
     std::cout << "  Velocity: " << velocity << "\n";
     std::cout << "  Mass: " << mass << " (inverse: " << inverseMass << ")\n";
     std::cout << "  Radius: " << radius << "\n";

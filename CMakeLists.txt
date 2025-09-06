@@ -61,6 +61,7 @@ set(PHYSICS_ENGINE_HEADERS
         include/Matrix2D.h
         include/Utility.h
         include/Polygon.h
+        examples/collision_demo.cpp
 )
 
 # create physics engine static library
@@ -68,9 +69,12 @@ add_library(physics_engine STATIC ${PHYSICS_ENGINE_SOURCES} ${PHYSICS_ENGINE_HEA
 target_include_directories(physics_engine PUBLIC include)
 
 # console demo (no graphics dependencies)
-add_executable(console_demo examples/console_demo.cpp
-)
+add_executable(console_demo examples/console_demo.cpp)
 target_link_libraries(console_demo physics_engine)
+
+# collision demo (no graphics dependencies)
+add_executable(collision_demo examples/collision_demo.cpp)
+target_link_libraries(collision_demo physics_engine)
 
 # graphics demo (requires dependency SFML)
 if(SFML_FOUND OR (sfml-graphics_FOUND AND sfml-window_FOUND AND sfml-system_FOUND))
