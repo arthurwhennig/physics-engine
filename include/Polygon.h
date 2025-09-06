@@ -9,11 +9,11 @@
 
 #ifndef PHYSICSENGINE_POLYGON_H
 #define PHYSICSENGINE_POLYGON_H
-
 #endif //PHYSICSENGINE_POLYGON_H
 
 #include <vector>
-#include "Vector2D.h"
+
+#include <Vector2D.h>
 
 class Projection {
 public:

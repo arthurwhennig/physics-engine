@@ -49,6 +49,7 @@ set(PHYSICS_ENGINE_SOURCES
         src/Matrix2D.cpp
         src/Utility.cpp
         src/Polygon.cpp
+        src/Quadtree.cpp
 )
 
 # physics engine library headers
@@ -61,6 +62,8 @@ set(PHYSICS_ENGINE_HEADERS
         include/Matrix2D.h
         include/Utility.h
         include/Polygon.h
+        include/Quadtree.h
+        include/AABB.h
         examples/collision_demo.cpp
 )
 

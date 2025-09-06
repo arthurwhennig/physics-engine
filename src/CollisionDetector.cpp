@@ -5,12 +5,28 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
-#include "CollisionDetector.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
 
-CollisionDetector::CollisionDetector() = default;
+#include <CollisionDetector.h>
+#include <Quadtree.h>
+
+CollisionDetector::CollisionDetector(bool enableQuadtree)
+    : useQuadtree(enableQuadtree), worldBounds(-1000, -1000, 1000, 1000)
+{
+    if (useQuadtree) {
+        quadtree = std::make_unique<Quadtree>(worldBounds);
+    }
+}
+
+CollisionDetector::CollisionDetector(const AABB& worldBounds, bool enableQuadtree)
+    : useQuadtree(enableQuadtree), worldBounds(worldBounds)
+{
+    if (useQuadtree) {
+        quadtree = std::make_unique<Quadtree>(worldBounds);
+    }
+}
 
 CollisionDetector::~CollisionDetector() = default;
 
@@ -18,27 +34,45 @@ CollisionDetector::~CollisionDetector() = default;
 void CollisionDetector::detectCollisions(const std::vector<std::shared_ptr<RigidBody>> &bodies)
 {
     collisions.clear();
-    // simple N^2 collision detection (can be optimized with spatial partitioning)
-    for (size_t i = 0; i < bodies.size(); ++i)
-    {
-        for (size_t j = i + 1; j < bodies.size(); ++j)
-        {
+    
+    if (useQuadtree && quadtree) {
+        // use quadtree for efficient broad-phase collision detection
+        quadtree->build(bodies);
+        auto potentialPairs = quadtree->getPotentialPairs();
+        
+        // perform narrow-phase collision detection on potential pairs
+        for (const auto& [bodyA, bodyB] : potentialPairs) {
             CollisionInfo collision;
-            collision.bodyA = bodies[i];
-            collision.bodyB = bodies[j];
-            if (testCollision(*bodies[i], *bodies[j], collision))
-            {
+            collision.bodyA = bodyA;
+            collision.bodyB = bodyB;
+            
+            if (testCollision(*bodyA, *bodyB, collision)) {
                 collision.separatingVelocity = calculateSeparatingVelocity(collision);
                 // only add collision if objects are moving towards each other
-                if (collision.separatingVelocity < 0.0f)
-                {
+                if (collision.separatingVelocity < 0.0f) {
                     collisions.push_back(collision);
+                }
+            }
+        }
+    } else {
+        // fallback to naive O(n²) collision detection
+        for (size_t i = 0; i < bodies.size(); ++i) {
+            for (size_t j = i + 1; j < bodies.size(); ++j) {
+                CollisionInfo collision;
+                collision.bodyA = bodies[i];
+                collision.bodyB = bodies[j];
+                
+                if (testCollision(*bodies[i], *bodies[j], collision)) {
+                    collision.separatingVelocity = calculateSeparatingVelocity(collision);
+                    // only add collision if objects are moving towards each other
+                    if (collision.separatingVelocity < 0.0f) {
+                        collisions.push_back(collision);
+                    }
                 }
             }
         }
     }
 }
-
 // collision resolution
 void CollisionDetector::resolveCollisions() const {
     for (auto &collision : collisions)
@@ -467,4 +501,36 @@ float CollisionDetector::calculateFriction(const CollisionInfo &collision)
 {
     // use the geometric mean of the friction coefficients
     return std::sqrt(collision.bodyA->getFriction() * collision.bodyB->getFriction());
+}
+
+// Quadtree control methods
+void CollisionDetector::setWorldBounds(const AABB& bounds)
+{
+    worldBounds = bounds;
+    if (useQuadtree) {
+        quadtree = std::make_unique<Quadtree>(worldBounds);
+    }
+}
+
+std::vector<AABB> CollisionDetector::getQuadtreeVisualization() const
+{
+    if (useQuadtree && quadtree) {
+        return quadtree->getVisualizationBounds();
+    }
+    return {};
+}
+
+void CollisionDetector::printQuadtreeStats() const
+{
+    if (useQuadtree && quadtree) {
+        auto stats = quadtree->getStats();
+        std::cout << "Quadtree Statistics:\n";
+        std::cout << "  Total Nodes: " << stats.totalNodes << "\n";
+        std::cout << "  Leaf Nodes: " << stats.leafNodes << "\n";
+        std::cout << "  Max Depth: " << stats.maxDepth << "\n";
+        std::cout << "  Total Objects: " << stats.totalObjects << "\n";
+        std::cout << "  Avg Objects/Leaf: " << stats.averageObjectsPerLeaf << "\n";
+    } else {
+        std::cout << "Quadtree not enabled or not initialized\n";
+    }
 }

@@ -12,6 +12,7 @@
 #endif //PHYSICSENGINE_VECTOR2D_H
 
 #include <iostream>
+
 #include <Utility.h>
 
 /**

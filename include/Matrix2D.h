@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <Vector2D.h>
-#include <Utility.h>
-
 #ifndef PHYSICSENGINE_MATRIX2D_H
 #define PHYSICSENGINE_MATRIX2D_H
 #endif //PHYSICSENGINE_MATRIX2D_H
+
+#include <Vector2D.h>
+#include <Utility.h>
 
 class Matrix2D
 {

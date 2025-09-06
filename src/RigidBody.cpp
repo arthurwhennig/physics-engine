@@ -8,9 +8,10 @@
 #include <iostream>
 #include <cmath>
 
-#include "Vector2D.h"
-#include "RigidBody.h"
-#include "Utility.h"
+#include <AABB.h>
+#include <RigidBody.h>
+#include <Utility.h>
+#include <Vector2D.h>
 
 // constructors
 RigidBody::RigidBody()
@@ -299,11 +300,58 @@ Vector2D RigidBody::getPointVelocity(const Vector2D &point) const
     return velocity + rotationalVelocity;
 }
 
+// spatial partitioning support
+AABB RigidBody::getAABB() const
+{
+    switch (bodyShape) {
+        case BodyShape::CIRCLE:
+            return AABB::fromCenterAndRadius(*position, radius);
+            
+        case BodyShape::POLYGON: {
+            if (polygon.size() == 0) {
+                return AABB::fromCenterAndRadius(*position, 1.0f); // fallback
+            }
+            
+            // calculate AABB from polygon vertices
+            Vector2D firstVertex = polygon.getWorldPoint(0);
+            AABB aabb(firstVertex, firstVertex);
+            
+            for (size_t i = 1; i < polygon.size(); ++i) {
+                Vector2D vertex = polygon.getWorldPoint(i);
+                aabb.expand(vertex);
+            }
+            return aabb;
+        }
+        
+        case BodyShape::POINT:
+            return AABB::fromCenterAndRadius(*position, 0.1f);
+            
+        case BodyShape::LINE: {
+            if (polygon.size() > 0) {
+                Vector2D endPoint = polygon.getWorldPoint(0);
+                AABB aabb(*position, endPoint);
+                return aabb;
+            }
+            return AABB::fromCenterAndRadius(*position, 1.0f);
+        }
+        
+        default:
+            return AABB::fromCenterAndRadius(*position, 1.0f);
+    }
+}
+
+AABB RigidBody::getAABB(const float margin) const
+{
+    AABB aabb = getAABB();
+    aabb.expand(margin);
+    return aabb;
+}
+
 // debug information
 void RigidBody::printDebugInfo() const
 {
     std::cout << "RigidBody Debug Info:\n";
-    std::cout << "  Position: " << *position << "\n";
+    std::cout << "  Position: " << position << "\n";
     std::cout << "  Velocity: " << velocity << "\n";
     std::cout << "  Mass: " << mass << " (inverse: " << inverseMass << ")\n";
     std::cout << "  Radius: " << radius << "\n";
@@ -311,4 +359,5 @@ void RigidBody::printDebugInfo() const
     std::cout << "  Awake: " << (awake ? "Yes" : "No") << "\n";
     std::cout << "  Restitution: " << restitution << "\n";
     std::cout << "  Friction: " << friction << "\n";
+    std::cout << "  AABB: " << getAABB() << "\n";
 }

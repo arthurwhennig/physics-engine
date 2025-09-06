@@ -5,11 +5,12 @@
 //  Created by Arthur Hennig on 04.09.2025.
 //
 
-#include "PhysicsWorld.h"
-#include "CollisionDetector.h"
-#include "ForceGenerator.h"
 #include <iostream>
 #include <algorithm>
+
+#include <CollisionDetector.h>
+#include <ForceGenerator.h>
+#include <PhysicsWorld.h>
 
 // constructor and destructor
 PhysicsWorld::PhysicsWorld(const Vector2D &gravity)

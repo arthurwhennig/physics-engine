@@ -6,12 +6,13 @@
 //
 #pragma once
 
-#include "Vector2D.h"
-#include "Polygon.h"
-
 #ifndef PHYSICSENGINE_RIGIDBODY_H
 #define PHYSICSENGINE_RIGIDBODY_H
 #endif //PHYSICSENGINE_RIGIDBODY_H
+
+#include <AABB.h>
+#include <Polygon.h>
+#include <Vector2D.h>
 
 /**
  * @brief represents a rigid body in 2D physics simulation
@@ -164,6 +165,10 @@ public:
     // utility methods
     [[nodiscard]] Vector2D getPointVelocity(const Vector2D &point) const;
     [[nodiscard]] bool hasFiniteMass() const { return inverseMass > 0.0f; }
+    
+    // spatial partitioning support
+    [[nodiscard]] AABB getAABB() const;
+    [[nodiscard]] AABB getAABB(float margin) const;
 
     // debug information
     void printDebugInfo() const;

@@ -7,17 +7,17 @@
 
 #pragma once
 
-#include <vector>
-#include <memory>
-
-#include "RigidBody.h"
-#include "Vector2D.h"
-#include "ForceGenerator.h"
-#include "CollisionDetector.h"
-
 #ifndef PHYSICSENGINE_PHYSICSWORLD_H
 #define PHYSICSENGINE_PHYSICSWORLD_H
 #endif //PHYSICSENGINE_PHYSICSWORLD_H
+
+#include <vector>
+#include <memory>
+
+#include <CollisionDetector.h>
+#include <ForceGenerator.h>
+#include <RigidBody.h>
+#include <Vector2D.h>
 
 /**
  * @brief manages the physics simulation world

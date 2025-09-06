@@ -5,9 +5,9 @@
 //  Created by Arthur Hennig on 05.09.2025.
 //
 
-#include <Polygon.h>
 #include <Matrix2D.h>
-#include "Utility.h"
+#include <Polygon.h>
+#include <Utility.h>
 
 Projection::Projection(const float min, const float max) : min(min), max(max) {};
 

@@ -10,9 +10,8 @@
 #endif // CONSTANTS_H
 
 #include <cmath>
-#include "Utility.h"
 
-
+#include <Utility.h>
 
 float degreesToRadians(const float degrees) {
     return (degrees/180.0f) * PI;

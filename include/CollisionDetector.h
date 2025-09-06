@@ -6,15 +6,17 @@
 //
 
 #pragma once
-#include <vector>
-#include <memory>
-
-#include "RigidBody.h"
-#include "Vector2D.h"
 
 #ifndef PHYSICSENGINE_COLLISIONDETECTOR_H
 #define PHYSICSENGINE_COLLISIONDETECTOR_H
 #endif //PHYSICSENGINE_COLLISIONDETECTOR_H
+
+#include <vector>
+#include <memory>
+
+#include <RigidBody.h>
+#include <Vector2D.h>
+#include <Quadtree.h>
 
 /**
  * @brief structure to hold collision information
@@ -59,9 +61,13 @@ class CollisionDetector
 {
 private:
     std::vector<CollisionInfo> collisions;
+    std::unique_ptr<Quadtree> quadtree;
+    bool useQuadtree;
+    AABB worldBounds;
 
 public:
-    CollisionDetector();
+    explicit CollisionDetector(bool enableQuadtree = true);
+    explicit CollisionDetector(const AABB& worldBounds, bool enableQuadtree = true);
     ~CollisionDetector();
 
     // main collision detection methods
@@ -87,8 +93,14 @@ public:
     // broad phase collision detection (spatial partitioning could be added here)
     static std::vector<std::pair<size_t, size_t>> broadPhase(const std::vector<std::shared_ptr<RigidBody>> &bodies);
 
+    // quadtree control
+    void enableQuadtree(bool enable) { useQuadtree = enable; }
+    void setWorldBounds(const AABB& bounds);
+    [[nodiscard]] std::vector<AABB> getQuadtreeVisualization() const;
+    
     // debug information
     void printCollisionInfo() const;
+    void printQuadtreeStats() const;
     [[nodiscard]] int getCollisionCount() const { return static_cast<int>(collisions.size()); }
 
 private:

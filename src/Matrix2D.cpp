@@ -6,9 +6,10 @@
 //
 
 #include <cmath>
+
+#include <Matrix2D.h>
 #include <Utility.h>
 #include <Vector2D.h>
-#include <Matrix2D.h>
 
 // constructors
 Matrix2D::Matrix2D() : a(0.0f), b(0.0f), c(0.0f), d(0.0f) {}

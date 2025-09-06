@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
-
-#include "RigidBody.h"
-#include "Vector2D.h"
-
 #ifndef PHYSICSENGINE_FORCEGENERATOR_H
 #define PHYSICSENGINE_FORCEGENERATOR_H
 #endif //PHYSICSENGINE_FORCEGENERATOR_H
+
+#include <memory>
+#include <vector>
+
+#include <RigidBody.h>
+#include <Vector2D.h>
 
 /**
  * @brief base class for force generators
