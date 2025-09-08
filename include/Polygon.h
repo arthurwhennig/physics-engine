@@ -13,6 +13,7 @@
 
 #include <vector>
 
+#include <Circle.h>
 #include <Vector2D.h>
 
 class Projection {
@@ -40,17 +41,17 @@ public:
     // destructor
     ~Polygon();
 
-    // check if the other polygon overlaps with this one using SAT
+    // checks if the other polygon overlaps with this one using SAT
     [[nodiscard]] bool overlaps(const Polygon &other) const;
 
-    // returns the indices of the edges of this polygon that overlap with the other polygon
-    [[nodiscard]] std::vector<int> overlap(const Polygon &other) const;
-
-    // point from other polygon which is closest to 'center'
-    [[nodiscard]] Vector2D closest(const Polygon &other) const;
+    // checks if this polygon and the other circle overlap
+    [[nodiscard]] bool overlaps(const Circle& other) const;
 
     // rotates the polygon point around 'center' by the given number of degrees
-    void rotate(float degrees);
+    void rotate(float radians);
+
+    // compute the moment of inertia when trying to rotate this polygon around its center
+    [[nodiscard]] float momentOfInertia(float mass) const;
 
     // check if the given point is contained within the polygon
     [[nodiscard]] bool contains(const Vector2D &point) const;
@@ -66,13 +67,15 @@ public:
     void addPoints(const std::vector<Vector2D> &pointsList);
     // compute the vectors between points (edges) and their normals
     void computeEdges();
+    // compute the area of the polygon
+    void computeArea();
     
     // accessors
-    [[nodiscard]] const std::vector<Vector2D>& getPoints() const { return points; }
-    [[nodiscard]] const std::vector<Vector2D>& getEdges() const { return edges; }
-    [[nodiscard]] const std::vector<Vector2D>& getEdgeNormals() const { return normals; }
-    [[nodiscard]] const Vector2D* getCenter() const { return center; }
-    [[nodiscard]] size_t size() const { return points.size(); }
+    [[nodiscard]] const std::vector<Vector2D>& getPoints() const;
+    [[nodiscard]] const std::vector<Vector2D>& getEdges() const;
+    [[nodiscard]] const std::vector<Vector2D>& getEdgeNormals() const;
+    [[nodiscard]] Vector2D getCenter() const;
+    [[nodiscard]] size_t size() const;
 
     // retrieves the vector of the point at 'index' (relative to 'center')
     [[nodiscard]] Vector2D getPoint(size_t index) const;
@@ -82,17 +85,27 @@ public:
     [[nodiscard]] Vector2D getEdge(size_t index) const;
     // retrieves the edge normal between points at 'index' and 'index'+1 (mod number of points)
     [[nodiscard]] Vector2D getEdgeNormal(size_t index) const;
-
+    // retrieve the area of the polygon
+    [[nodiscard]] float getArea() const;
+    // retrieve the bounds of the polygon
+    [[nodiscard]] Vector2D getMinimum() const;
+    [[nodiscard]] Vector2D getMaximum() const;
 
 private:
-    Vector2D* center;
-    std::vector<Vector2D> points;
-    std::vector<Vector2D> edges;
-    std::vector<Vector2D> normals;
-    bool ownsCenter; // tracks if we need to delete center in destructor
+    Vector2D* center;                       // center position of the polygon
+    std::vector<Vector2D> points;           // point coordinates relative to the center
+    std::vector<Vector2D> edges;            // edges between consecutive points
+    std::vector<Vector2D> normals;          // normalized orthogonal vectors of the edges, pointing inside
+
+    // metadata
+    float area{};
+    Vector2D min;
+    Vector2D max;
 
     // reset all points
     void clearPoints();
     // reset all edges
     void clearEdges();
+    // update min and max if necessary
+    void updateBounds(const Vector2D& point);
 };

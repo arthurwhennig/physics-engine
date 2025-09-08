@@ -21,10 +21,6 @@
  */
 class AABB {
 public:
-    Vector2D* center;   // center position of the rigid body
-    Vector2D min;       // bottom-left corner
-    Vector2D max;       // top-right corner
-
     // constructors
     AABB();
     AABB(const Vector2D& min, const Vector2D& max);
@@ -85,4 +81,9 @@ public:
         os << "AABB(min: " << aabb.min << ", max: " << aabb.max << ")";
         return os;
     }
+
+private:
+    Vector2D* center;   // center position of the rigid body
+    Vector2D min;       // bottom-left corner
+    Vector2D max;       // top-right corner
 };

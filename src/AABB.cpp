@@ -6,8 +6,7 @@
 //
 
 #include <AABB.h>
-
-#include "Matrix2D.h"
+#include <Matrix2D.h>
 
 AABB::AABB(): min(0, 0), max(0, 0)
 {
