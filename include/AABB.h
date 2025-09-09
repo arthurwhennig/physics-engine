@@ -26,9 +26,26 @@ public:
     AABB(const Vector2D& min, const Vector2D& max);
     AABB(float minX, float minY, float maxX, float maxY);
 
-    // getter and setter for the center position
+    // returns the center position in the middle of min and max
     [[nodiscard]] Vector2D getCenter() const;
-    void setCenter(Vector2D* newCenter);
+
+    // getter and setter for the position vector (used for rotation)
+
+    // returns a copy of the position vector
+    [[nodiscard]] Vector2D getPosition() const;
+    // sets the position vector to the new position (if it is contained within min and max)
+    void setPosition(Vector2D* newPosition);
+
+    // getters and setters of min and max
+
+    // returns the minimum vector (bottom left corner)
+    [[nodiscard]] Vector2D getMinimum() const;
+    // sets the minimum vector (if it is at most max)
+    void setMinimum(const Vector2D& minimum);
+    // returns the minimum vector (bottom left corner)
+    [[nodiscard]] Vector2D getMaximum() const;
+    // sets the maximum vector (if it is at least min)
+    void setMaximum(const Vector2D& maximum);
 
     // properties
     [[nodiscard]] float width() const;
@@ -36,11 +53,13 @@ public:
     [[nodiscard]] Vector2D size() const;
     [[nodiscard]] float area() const;
 
-    // collision detection
+    // returns true if this and the other AABB intersect
     [[nodiscard]] bool intersects(const AABB& other) const;
 
+    // returns true if this AABB contains the given point
     [[nodiscard]] bool contains(const Vector2D& point) const;
 
+    // returns true if this AABB contains the given AABB
     [[nodiscard]] bool contains(const AABB& other) const;
 
     // move the AABB by the given translation vector
@@ -83,7 +102,7 @@ public:
     }
 
 private:
-    Vector2D* center;   // center position of the rigid body
+    Vector2D* position;   // center position of the rigid body
     Vector2D min;       // bottom-left corner
     Vector2D max;       // top-right corner
 };

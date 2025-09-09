@@ -10,27 +10,52 @@
 
 AABB::AABB(): min(0, 0), max(0, 0)
 {
-    center = new Vector2D();
+    position = new Vector2D();
 }
 
 AABB::AABB(const float minX, const float minY, const float maxX, const float maxY): min(minX, minY), max(maxX, maxY)
 {
-    center = new Vector2D(minX + (maxX-minX)/2, minY + (maxY-minY)/2);
+    position = new Vector2D(minX + (maxX-minX)/2, minY + (maxY-minY)/2);
 }
 
 AABB::AABB(const Vector2D& min, const Vector2D& max): min(min), max(max)
 {
-    center = new Vector2D(min.x + (max.x-min.x)/2, min.y + (max.y-min.y)/2);
+    position = new Vector2D(min.x + (max.x-min.x)/2, min.y + (max.y-min.y)/2);
 }
 
 Vector2D AABB::getCenter() const
 {
-    return *center;
+    return {min.x + (max.x-min.x)/2, min.y + (max.y-min.y)/2};
 }
 
-void AABB::setCenter(Vector2D *newCenter)
+Vector2D AABB::getPosition() const
 {
-    if (contains(*newCenter)) center = newCenter;
+    return *position;
+}
+
+void AABB::setPosition(Vector2D* newPosition)
+{
+    if (contains(*newPosition)) position = newPosition;
+}
+
+Vector2D AABB::getMinimum() const
+{
+    return min;
+}
+
+void AABB::setMinimum(const Vector2D& minimum)
+{
+    if (minimum.x <= max.x && minimum.y <= max.y) min = minimum;
+}
+
+Vector2D AABB::getMaximum() const
+{
+    return max;
+}
+
+void AABB::setMaximum(const Vector2D& maximum)
+{
+    if (min.x <= maximum.x && min.y <= maximum.y) max = maximum;
 }
 
 float AABB::width() const
@@ -73,16 +98,15 @@ void AABB::translate(const Vector2D& translation)
 {
     min += translation;
     max += translation;
-    *center += translation;
 }
 
 void AABB::rotate(const float radians)
 {
     const auto rotation = Matrix2D(radians);
-    const Vector2D minRel = (min-*center);
-    const Vector2D maxRel = (max-*center);
-    min = *center + (rotation * minRel);
-    max = *center + (rotation * maxRel);
+    const Vector2D minRel = (min-*position);
+    const Vector2D maxRel = (max-*position);
+    min = *position + (rotation * minRel);
+    max = *position + (rotation * maxRel);
 }
 
 void AABB::expand(const AABB& other)
@@ -118,20 +142,20 @@ void AABB::expand(const float x, const float y) {
 
 bool AABB::isValid() const
 {
-    return contains(*center) && min.x <= max.x && min.y <= max.y;
+    return contains(*position) && min.x <= max.x && min.y <= max.y;
 }
 
 AABB AABB::fromCenter(Vector2D& centerPos, const Vector2D& halfExtents)
 {
     auto aabb = AABB(centerPos - halfExtents, centerPos + halfExtents);
-    aabb.center = &centerPos;
+    aabb.position = &centerPos;
     return aabb;
 }
 
 AABB AABB::fromCenter(Vector2D& centerPos, const float radius)
 {
     auto aabb = AABB(centerPos.x - radius, centerPos.y - radius, centerPos.x + radius, centerPos.y + radius);
-    aabb.center = &centerPos;
+    aabb.position = &centerPos;
     return aabb;
 }
 
